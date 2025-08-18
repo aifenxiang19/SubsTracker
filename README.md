@@ -1,6 +1,5 @@
 新功能：增加序列 和 状态统计
-![Uploading 截屏2025-08-18 13.17.53.png…]()
-
+<img width="1151" height="521" alt="截屏2025-08-18 13 17 53" src="https://github.com/user-attachments/assets/426bf176-e930-4686-8646-5dd89cce907f" />
 
 
 
