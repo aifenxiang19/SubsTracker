@@ -606,12 +606,16 @@ const adminPage = `
       </div>
     </div>
     
+    <!-- 这里新增统计栏 -->
+<div id="statusSummary" class="mb-4 text-sm text-gray-700"></div>
+
     <div class="table-container bg-white rounded-lg overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full divide-y divide-gray-200 responsive-table">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 25%;">
+              <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 5%;">序号</th>
+              <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 20%;">
                 名称
               </th>
               <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 15%;">
@@ -1170,8 +1174,43 @@ function addLunarPeriod(lunar, periodValue, periodUnit) {
         // 按到期时间升序排序（最早到期的在前）
         data.sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
         
-		//新增修改，添加日历类型
+        // ==== 状态统计 ====
+        let total = data.length;
+        let active = 0, expired = 0, upcoming = 0, stopped = 0;
+        
         data.forEach(subscription => {
+          const expiryDate = new Date(subscription.expiryDate);
+          const now = new Date();
+          const daysDiff = Math.ceil((expiryDate - now) / (1000*60*60*24));
+        
+          if (!subscription.isActive) {
+            stopped++;
+          } else if (daysDiff < 0) {
+            expired++;
+          } else if (daysDiff <= (subscription.reminderDays || 7)) {
+            upcoming++;
+          } else {
+            active++;
+          }
+        });
+        
+        const statusSummaryEl = document.getElementById('statusSummary');
+        if (statusSummaryEl) {
+          statusSummaryEl.innerHTML =  
+          '<span class="mr-4">总数: <strong>' + total + '</strong></span>' +
+          '<span class="text-green-600 mr-4">正常: ' + active + '</span>' +
+          '<span class="text-yellow-600 mr-4">即将到期: ' + upcoming + '</span>' +
+          '<span class="text-red-600 mr-4">已过期: ' + expired + '</span>' +
+          '<span class="text-gray-600">已停用: ' + stopped + '</span>';
+        } else {
+          console.error('Status summary element not found');
+        }
+        // ==== 统计结束 ====
+        
+
+        
+		//新增修改，添加日历类型
+        data.forEach((subscription, index)  => {
           const row = document.createElement('tr');
           row.className = subscription.isActive === false ? 'hover:bg-gray-50 bg-gray-100' : 'hover:bg-gray-50';
           
@@ -1258,6 +1297,7 @@ function addLunarPeriod(lunar, periodValue, periodUnit) {
 
 		  //新增修改，修改日历类型
 		  row.innerHTML =
+      '<td data-label="序列" class="px-4 py-3"><div class="td-content-wrapper">' + (index + 1) + '</td>' +   // 自动序号
 			'<td data-label="名称" class="px-4 py-3"><div class="td-content-wrapper">' +
 			  nameHtml +
 			  notesHtml +
