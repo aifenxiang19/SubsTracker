@@ -1,3 +1,10 @@
+
+#dy2.js 增加改变  - Gemini 制作
+. 订阅列表改用 D1数据库存储
+. 单击列表中备注的网址即可复制，双击即可打开网址。
+
+
+# 
 新功能：增加序列 和 状态统计
 <img width="1151" height="521" alt="截屏2025-08-18 13 17 53" src="https://github.com/user-attachments/assets/426bf176-e930-4686-8646-5dd89cce907f" />
 
